@@ -7,7 +7,7 @@ const app = await Spectrum({
   projectSecret: process.env.PROJECT_SECRET!,
   providers: [
     imessage.config(),
-    terminal.config(),
+    // terminal.config(),
   ]
 });
 
@@ -16,10 +16,8 @@ const user = await im.user(process.env.USER_PHONE_NUMBER!);
 const dm = await im.space(user);
 await dm.send("Hello user! This is a message from Spectrum.");
 
-/*
 for await (const [space, message] of app.messages) {
   await space.responding(async () => {
     await message.reply("Hello from Spectrum.");
   });
 }
-*/

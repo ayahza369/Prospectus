@@ -51,7 +51,7 @@
       "provider": "llm_anthropic",
       "config": {
         "profile": "claude-sonnet-4-6",
-        "claude-sonnet-4-6": { "apikey": "${ROCKETRIDE_ANTHROPIC_KEY}" },
+        "claude-sonnet-4-6": { "apikey": "${ROCKETRIDE_APIKEY_ANTHROPIC}" },
         "parameters": {}
       },
       "input": [{ "lane": "questions", "from": "prompt_1" }],

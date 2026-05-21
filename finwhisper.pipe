@@ -1,0 +1,82 @@
+{
+  "components": [
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "config": { "hideForm": true, "mode": "Source", "parameters": {}, "type": "webhook" },
+      "ui": { "position": { "x": 20, "y": 300 }, "measured": { "width": 150, "height": 66 }, "nodeType": "default", "formDataValid": true }
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "config": { "parameters": {} },
+      "input": [{ "lane": "text", "from": "webhook_1" }],
+      "ui": { "position": { "x": 220, "y": 300 }, "measured": { "width": 150, "height": 66 }, "nodeType": "default", "formDataValid": true }
+    },
+    {
+      "id": "chroma_1",
+      "provider": "chroma",
+      "config": {
+        "type": "chroma",
+        "mode": "Target",
+        "parameters": {
+          "autopipe": {
+            "remote": {
+              "provider": "remote",
+              "remote": { "profile": "local", "local": { "mode": "local" } }
+            },
+            "store": {
+              "provider": "chroma",
+              "chroma": {
+                "profile": "local",
+                "local": { "host": "localhost", "port": 8330, "collection": "prospectus_10k" }
+              }
+            },
+            "embedding": {
+              "provider": "embedding_transformer",
+              "embedding_transformer": { "profile": "miniLM" }
+            }
+          }
+        }
+      },
+      "input": [{ "lane": "questions", "from": "question_1" }],
+      "ui": { "position": { "x": 420, "y": 300 }, "measured": { "width": 150, "height": 135 }, "nodeType": "default", "formDataValid": true }
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "config": {
+        "instructions": [
+          "You are FinWhisper, a financial research assistant that answers questions strictly using SEC 10-K filing excerpts provided as context.\n\nRULES:\n1. Answer ONLY from the context passages provided. Never use outside knowledge.\n2. Every answer must cite its source: include the company name and a short phrase from the passage.\n3. If the context does not contain the answer, reply exactly: \"I don't have that information in the filings I've indexed. Try /stats [COMPANY] for a summary.\"\n4. Format for iMessage — plain text only. No markdown. No asterisks. No # headers. No bold syntax.\n5. Use CAPITAL LETTERS for emphasis. Use bullet marks (•) not hyphens. Max 3 sentences per paragraph.\n6. Keep responses under 250 words. Be direct.\n\nRESPONSE FORMAT:\n[Your answer in plain text]\n\nSource: [Company name] 10-K — \"[short quoted phrase from the passage]\"\n\nSLASH COMMANDS:\n/ask [company] [question] — answer from that company's filings only\n/compare [co1] [co2] [topic] — compare both companies on the topic, cite both\n/stats [company] — return the pre-built key metrics summary for that company\n\nIndexed companies: Amazon, Berkshire Hathaway, Eli Lilly, Tesla."
+        ],
+        "parameters": {}
+      },
+      "input": [
+        { "lane": "documents", "from": "chroma_1" },
+        { "lane": "questions", "from": "chroma_1" }
+      ],
+      "ui": { "position": { "x": 620, "y": 300 }, "measured": { "width": 150, "height": 66 }, "nodeType": "default", "formDataValid": true }
+    },
+    {
+      "id": "llm_anthropic_1",
+      "provider": "llm_anthropic",
+      "config": {
+        "profile": "claude-sonnet-4-6",
+        "claude-sonnet-4-6": { "apikey": "${ANTHROPIC_API_KEY}" },
+        "parameters": {}
+      },
+      "input": [{ "lane": "questions", "from": "prompt_1" }],
+      "ui": { "position": { "x": 820, "y": 300 }, "measured": { "width": 150, "height": 66 }, "nodeType": "default", "formDataValid": true }
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "config": { "laneName": "answers" },
+      "input": [{ "lane": "answers", "from": "llm_anthropic_1" }],
+      "ui": { "position": { "x": 1020, "y": 300 }, "measured": { "width": 150, "height": 66 }, "nodeType": "default", "formDataValid": true }
+    }
+  ],
+  "project_id": "a3f2c1d0-9b4e-4a7f-8c2d-1e5b6f3a0d9c",
+  "viewport": { "x": 0, "y": 0, "zoom": 1 },
+  "version": 1
+}

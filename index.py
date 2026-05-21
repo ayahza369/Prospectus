@@ -33,8 +33,7 @@ def index_company(client, company_key, file_path):
 
 if __name__ == "__main__":
     client = chromadb.HttpClient(host="localhost", port=8330)
-    index_company(client, "tesla", "data/clean/Tesla.txt")
-    index_company(client, "elililly", "data/clean/EliLilly.txt")
-    # add these when Person B delivers them:
-    index_company(client, "amazon", "data/clean/Amazon.txt")
-    index_company(client, "berkshire", "data/clean/Berkshire.txt")
+    index_company(client, "tesla", "data/clean/tesla_annual.txt")
+    index_company(client, "elililly", "data/clean/elililly_annual.txt")
+    index_company(client, "amazon", "data/clean/amazon_annual.txt")
+    index_company(client, "berkshire", "data/clean/berkshire_annual.txt")
